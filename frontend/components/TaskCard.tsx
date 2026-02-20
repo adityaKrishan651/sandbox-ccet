@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Task } from "@/types";
 
 interface TaskCardProps {
@@ -19,27 +18,21 @@ export default function TaskCard({
     : "";
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft">
-      <h3 className="font-semibold text-slate-900">{task.title}</h3>
+    <div className="card card-padding flex flex-col">
+      <h3 className="text-base font-semibold text-slate-900">{task.title}</h3>
       <p className="mt-2 line-clamp-2 text-sm text-slate-600">{task.description}</p>
-      {task.location && (
-        <p className="mt-1 text-xs text-slate-500">📍 {task.location}</p>
-      )}
-      {skills && (
-        <p className="mt-1 text-xs text-slate-500">Skills: {skills}</p>
-      )}
-      {task.hours_per_week && (
-        <p className="mt-1 text-xs text-slate-500">
-          ~{task.hours_per_week} hrs/week
-        </p>
-      )}
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+        {task.location && <span>{task.location}</span>}
+        {skills && <span>{skills}</span>}
+        {task.hours_per_week && <span>{task.hours_per_week} hrs/wk</span>}
+      </div>
       {showAnalyze && onAnalyze && (
         <button
           onClick={() => onAnalyze(task.id)}
           disabled={isAnalyzing}
-          className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+          className="mt-5 w-full rounded-md bg-primary-600 py-2.5 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
         >
-          {isAnalyzing ? "Analyzing…" : "Analyze Match"}
+          {isAnalyzing ? "Analyzing…" : "Analyze match"}
         </button>
       )}
     </div>

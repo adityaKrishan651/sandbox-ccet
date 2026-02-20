@@ -18,14 +18,19 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await api.post<{ token: string; user: { id: string; name: string; email: string; role: string; location: string } }>(
-        "/auth/login",
-        { email, password }
-      );
-      setAuth(data.token, { ...data.user, role: data.user.role as "volunteer" | "ngo" });
+      const { data } = await api.post<{
+        token: string;
+        user: { id: string; name: string; email: string; role: string; location: string };
+      }>("/auth/login", { email, password });
+      setAuth(data.token, {
+        ...data.user,
+        role: data.user.role as "volunteer" | "ngo",
+      });
       router.push("/dashboard");
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error ?? "Login failed";
+      const msg =
+        (err as { response?: { data?: { error?: string } } })?.response?.data
+          ?.error ?? "Login failed";
       setError(msg);
     } finally {
       setLoading(false);
@@ -33,12 +38,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-12">
-      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-soft">
-        <h1 className="text-2xl font-bold text-slate-900">Log in</h1>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <div className="container-page flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center py-12">
+      <div className="w-full max-w-[400px]">
+        <h1 className="text-xl font-semibold text-slate-900">Log in</h1>
+        <p className="mt-1 text-sm text-slate-500">Sign in to your account</p>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            <div className="rounded-md bg-danger-50 px-4 py-3 text-sm text-danger-600">
               {error}
             </div>
           )}
@@ -52,7 +58,8 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              autoComplete="email"
+              className="mt-1.5 w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
           <div>
@@ -65,20 +72,21 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              autoComplete="current-password"
+              className="mt-1.5 w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+            className="w-full rounded-md bg-primary-600 py-2.5 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
           >
-            {loading ? "Logging in…" : "Log in"}
+            {loading ? "Signing in…" : "Log in"}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-700">
+          <Link href="/register" className="font-medium text-primary-600 hover:text-primary-700">
             Sign up
           </Link>
         </p>

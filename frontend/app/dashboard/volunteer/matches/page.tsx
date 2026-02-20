@@ -5,20 +5,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { getUser } from "@/lib/auth";
-import MatchCard from "@/components/MatchCard";
+import AIMatchDisplay from "@/components/AIMatchDisplay";
 
 interface StoredMatch {
   id: string;
   task_id: string;
-  volunteer_id: string;
-  overall_score: number;
   skill_fit?: number;
   availability_fit?: number;
   completion_confidence?: number;
   risk_level?: string;
+  overall_score: number;
   explanation?: string;
   impact_alignment?: string;
-  created_at?: string;
   task?: { id: string; title: string };
 }
 
@@ -44,25 +42,36 @@ export default function VolunteerMatchesPage() {
 
   if (loading || !user) {
     return (
-      <div className="container-page py-12">
-        <p className="text-slate-600">Loading…</p>
+      <div className="flex items-center justify-center py-24">
+        <p className="text-sm text-slate-500">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="container-page py-12">
-      <Link href="/dashboard/volunteer" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
-        ← Back to dashboard
+    <div>
+      <Link href="/dashboard/volunteer" className="text-sm font-medium text-primary-600 hover:text-primary-700">
+        ← Overview
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">My matches</h1>
-      <p className="mt-2 text-slate-600">AI-evaluated compatibility results</p>
-      <div className="mt-8 space-y-6">
-        {matches.length === 0 ? (
-          <p className="text-slate-500">No matches yet. Analyze a task from your dashboard to get started.</p>
-        ) : (
-          matches.map((m) => (
-            <MatchCard
+      <header className="page-header mt-4">
+        <h1 className="page-title">My matches</h1>
+        <p className="page-subtitle">AI-evaluated compatibility results</p>
+      </header>
+
+      {matches.length === 0 ? (
+        <div className="card card-padding py-12 text-center">
+          <p className="text-sm text-slate-500">No matches yet. Analyze a task from Open tasks to get started.</p>
+          <Link
+            href="/dashboard/volunteer/tasks"
+            className="mt-4 inline-block text-sm font-medium text-primary-600 hover:text-primary-700"
+          >
+            Browse open tasks
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {matches.map((m) => (
+            <AIMatchDisplay
               key={m.id}
               match={{
                 skill_fit: m.skill_fit ?? 0,
@@ -76,9 +85,9 @@ export default function VolunteerMatchesPage() {
               taskTitle={m.task?.title}
               aiUsed={true}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

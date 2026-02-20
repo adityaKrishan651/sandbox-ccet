@@ -3,24 +3,25 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-slate-50 to-white py-20">
-        <div className="container-page text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-            Connect skills with impact
+      <section className="border-b border-slate-200 bg-white">
+        <div className="container-page py-16 md:py-20">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
+            AI-powered civic infrastructure
           </h1>
-          <p className="mt-4 text-xl text-slate-600">
-            AI-powered civic infrastructure for volunteer–NGO matching
+          <p className="mt-4 max-w-xl text-base text-slate-600">
+            SkillBridge matches volunteers to NGOs using structured compatibility
+            scoring, risk prediction, and trust metrics.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
+          <div className="mt-8 flex gap-3">
             <Link
               href="/register"
-              className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white hover:bg-indigo-700"
+              className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700"
             >
               Get started
             </Link>
             <Link
               href="/login"
-              className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-md border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               Log in
             </Link>
@@ -28,34 +29,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="container-page py-16">
-        <h2 className="text-2xl font-bold text-slate-900">
-          Why SkillBridge?
-        </h2>
-        <p className="mt-4 max-w-2xl text-slate-600">
-          NGOs struggle to find skilled volunteers; volunteers struggle to find
-          meaningful work. SkillBridge uses AI to evaluate compatibility between
-          your skills, availability, and impact goals—delivering ranked matches
-          with trust scores and transparent explanations.
+      <section className="container-page py-14 md:py-16">
+        <h2 className="text-lg font-semibold text-slate-900">Why SkillBridge</h2>
+        <p className="mt-3 max-w-2xl text-sm text-slate-600">
+          NGOs need reliability; volunteers want clarity before committing. AI
+          evaluates compatibility and delivers ranked matches with transparent
+          explanations.
         </p>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-soft">
-            <h3 className="font-semibold text-slate-900">Structured matching</h3>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="card card-padding">
+            <h3 className="text-sm font-semibold text-slate-900">Structured matching</h3>
             <p className="mt-2 text-sm text-slate-600">
-              Skills and availability are matched against task requirements for
-              precise fit.
+              Skills and availability matched against task requirements.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-soft">
-            <h3 className="font-semibold text-slate-900">AI evaluation</h3>
+          <div className="card card-padding">
+            <h3 className="text-sm font-semibold text-slate-900">AI evaluation</h3>
             <p className="mt-2 text-sm text-slate-600">
-              Gemini AI scores compatibility and explains strengths and gaps.
+              Compatibility scoring with clear strengths and gaps.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-soft">
-            <h3 className="font-semibold text-slate-900">Trust scoring</h3>
+          <div className="card card-padding">
+            <h3 className="text-sm font-semibold text-slate-900">Trust scoring</h3>
             <p className="mt-2 text-sm text-slate-600">
-              Impact points and reliability scores build a verified track record.
+              Impact points and reliability build a verified track record.
             </p>
           </div>
         </div>

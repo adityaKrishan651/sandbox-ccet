@@ -7,18 +7,10 @@ import { api } from "@/lib/api";
 import { getUser } from "@/lib/auth";
 import type { Task } from "@/types";
 
-interface RankedVolunteer {
-  id: string;
-  overall_score?: number;
-  risk_level?: string;
-  volunteer?: { id: string; name: string; email: string; location?: string };
-}
-
 export default function NGODashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [rankedByTask, setRankedByTask] = useState<Record<string, RankedVolunteer[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,80 +27,93 @@ export default function NGODashboardPage() {
       .finally(() => setLoading(false));
   }, [router]);
 
-  const loadRanked = async (taskId: string) => {
-    try {
-      const { data } = await api.get<{ ranked: RankedVolunteer[] }>(`/match/task/${taskId}`);
-      setRankedByTask((prev) => ({ ...prev, [taskId]: data.ranked || [] }));
-    } catch {
-      setRankedByTask((prev) => ({ ...prev, [taskId]: [] }));
-    }
-  };
-
   if (loading || !user) {
     return (
-      <div className="container-page py-12">
-        <p className="text-slate-600">Loading…</p>
+      <div className="flex items-center justify-center py-24">
+        <p className="text-sm text-slate-500">Loading…</p>
       </div>
     );
   }
 
+  const openTasks = tasks.filter((t) => t.status !== "closed");
+
   return (
-    <div className="container-page py-12">
-      <h1 className="text-2xl font-bold text-slate-900">NGO Dashboard</h1>
-      <Link
-        href="/dashboard/ngo/create-task"
-        className="mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-      >
-        Create task
-      </Link>
-      <h2 className="mt-10 text-lg font-semibold text-slate-900">Your tasks</h2>
-      <div className="mt-6 space-y-6">
+    <div>
+      <header className="page-header">
+        <h1 className="page-title">Overview</h1>
+        <p className="page-subtitle">Your NGO dashboard</p>
+      </header>
+
+      <div className="grid gap-5 sm:grid-cols-3">
+        <div className="card card-padding">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total tasks</p>
+          <p className="mt-2 text-xl font-semibold tabular-nums text-slate-900">{tasks.length}</p>
+        </div>
+        <div className="card card-padding">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Open</p>
+          <p className="mt-2 text-xl font-semibold tabular-nums text-primary-600">{openTasks.length}</p>
+        </div>
+        <div className="card card-padding">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Closed</p>
+          <p className="mt-2 text-xl font-semibold tabular-nums text-slate-600">{tasks.length - openTasks.length}</p>
+        </div>
+      </div>
+
+      <section className="section-spacing">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="section-title">Your tasks</h2>
+          <div className="flex gap-2">
+            <Link
+              href="/dashboard/ngo/create-task"
+              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+            >
+              Create task
+            </Link>
+            <Link href="/dashboard/ngo/tasks" className="text-sm font-medium text-primary-600 hover:text-primary-700">
+              View all
+            </Link>
+          </div>
+        </div>
+
         {tasks.length === 0 ? (
-          <p className="text-slate-500">No tasks yet. Create one to get started.</p>
+          <div className="card card-padding py-12 text-center">
+            <p className="text-sm text-slate-500">No tasks yet. Create one to get started.</p>
+            <Link
+              href="/dashboard/ngo/create-task"
+              className="mt-4 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+            >
+              Create task
+            </Link>
+          </div>
         ) : (
-          tasks.map((task) => {
-            const ranked = rankedByTask[task.id];
-            return (
+          <div className="space-y-3">
+            {tasks.slice(0, 5).map((task) => (
               <div
                 key={task.id}
-                className="rounded-xl border border-slate-200 bg-white p-6 shadow-soft"
+                className="card card-padding flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
               >
-                <h3 className="font-semibold text-slate-900">{task.title}</h3>
-                <p className="mt-2 line-clamp-2 text-sm text-slate-600">{task.description}</p>
-                <button
-                  onClick={() => loadRanked(task.id)}
-                  className="mt-4 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-slate-900">{task.title}</h3>
+                  <p className="mt-1 line-clamp-1 text-sm text-slate-600">{task.description}</p>
+                  <span
+                    className={`mt-2 inline-block rounded-md px-2 py-0.5 text-xs font-medium ${
+                      task.status === "open" ? "bg-success-50 text-success-600" : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {task.status}
+                  </span>
+                </div>
+                <Link
+                  href={`/dashboard/ngo/tasks/${task.id}`}
+                  className="shrink-0 rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
-                  View AI-ranked volunteers
-                </button>
-                {ranked !== undefined && (
-                  <div className="mt-4 space-y-2">
-                    {ranked.length === 0 ? (
-                      <p className="text-sm text-slate-500">No volunteer analyses yet.</p>
-                    ) : (
-                      ranked.map((r) => (
-                        <div
-                          key={r.id}
-                          className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
-                        >
-                          <div>
-                            <p className="font-medium text-slate-900">
-                              {r.volunteer?.name ?? "Unknown"}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              Score: {r.overall_score ?? "—"} · Risk: {r.risk_level ?? "—"}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
+                  View ranked volunteers
+                </Link>
               </div>
-            );
-          })
+            ))}
+          </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

@@ -6,18 +6,12 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { getUser } from "@/lib/auth";
 
+const inputClass =
+  "mt-1.5 w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500";
+
 export default function CreateTaskPage() {
   const router = useRouter();
   const [user, setUser] = useState<ReturnType<typeof getUser>>(null);
-
-  useEffect(() => {
-    const u = getUser();
-    if (!u || u.role !== "ngo") {
-      router.replace("/login");
-      return;
-    }
-    setUser(u);
-  }, [router]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
@@ -27,6 +21,15 @@ export default function CreateTaskPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const u = getUser();
+    if (!u || u.role !== "ngo") {
+      router.replace("/login");
+      return;
+    }
+    setUser(u);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,24 +65,28 @@ export default function CreateTaskPage() {
 
   if (!user) {
     return (
-      <div className="container-page py-12">
-        <p className="text-slate-600">Loading…</p>
+      <div className="flex items-center justify-center py-24">
+        <p className="text-sm text-slate-500">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="container-page py-12">
-      <Link href="/dashboard/ngo" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
-        ← Back to dashboard
+    <div>
+      <Link href="/dashboard/ngo" className="text-sm font-medium text-primary-600 hover:text-primary-700">
+        ← Overview
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Create task</h1>
-      <form onSubmit={handleSubmit} className="mt-6 max-w-xl space-y-4">
+      <header className="page-header mt-4">
+        <h1 className="page-title">Create task</h1>
+        <p className="page-subtitle">Add a new volunteer task</p>
+      </header>
+
+      <form onSubmit={handleSubmit} className="max-w-xl space-y-5">
         {error && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>
+          <div className="rounded-md bg-danger-50 px-4 py-3 text-sm text-danger-600">{error}</div>
         )}
         {success && (
-          <div className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
+          <div className="rounded-md bg-success-50 px-4 py-3 text-sm text-success-600">
             Task created. Redirecting…
           </div>
         )}
@@ -94,7 +101,7 @@ export default function CreateTaskPage() {
             onChange={(e) => setTitle(e.target.value)}
             required
             minLength={3}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className={inputClass}
           />
         </div>
         <div>
@@ -108,7 +115,7 @@ export default function CreateTaskPage() {
             required
             minLength={10}
             rows={4}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className={inputClass}
           />
         </div>
         <div>
@@ -121,7 +128,7 @@ export default function CreateTaskPage() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. Remote, San Francisco"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className={inputClass}
           />
         </div>
         <div>
@@ -134,42 +141,44 @@ export default function CreateTaskPage() {
             value={skillsInput}
             onChange={(e) => setSkillsInput(e.target.value)}
             required
-            placeholder="e.g. Web development, Communication, Project management"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="e.g. Web development, Communication"
+            className={inputClass}
           />
         </div>
-        <div>
-          <label htmlFor="hours" className="block text-sm font-medium text-slate-700">
-            Hours per week
-          </label>
-          <input
-            id="hours"
-            type="number"
-            min={1}
-            max={80}
-            value={hoursPerWeek}
-            onChange={(e) => setHoursPerWeek(e.target.value)}
-            placeholder="e.g. 5"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="impact" className="block text-sm font-medium text-slate-700">
-            Impact area
-          </label>
-          <input
-            id="impact"
-            type="text"
-            value={impactArea}
-            onChange={(e) => setImpactArea(e.target.value)}
-            placeholder="e.g. Education, Health, Climate"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="hours" className="block text-sm font-medium text-slate-700">
+              Hours per week
+            </label>
+            <input
+              id="hours"
+              type="number"
+              min={1}
+              max={80}
+              value={hoursPerWeek}
+              onChange={(e) => setHoursPerWeek(e.target.value)}
+              placeholder="e.g. 5"
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="impact" className="block text-sm font-medium text-slate-700">
+              Impact area
+            </label>
+            <input
+              id="impact"
+              type="text"
+              value={impactArea}
+              onChange={(e) => setImpactArea(e.target.value)}
+              placeholder="e.g. Education, Health"
+              className={inputClass}
+            />
+          </div>
         </div>
         <button
           type="submit"
           disabled={loading || success}
-          className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+          className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
         >
           {loading ? "Creating…" : success ? "Created" : "Create task"}
         </button>

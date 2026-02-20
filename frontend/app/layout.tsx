@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
+import PublicNavbar from "@/components/PublicNavbar";
+import PageWrapper from "@/components/PageWrapper";
 
 export const metadata: Metadata = {
   title: "SkillBridge",
@@ -11,8 +12,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main className="min-h-[calc(100vh-64px)]">{children}</main>
+        <PublicNavbar />
+        <PageWrapper>{children}</PageWrapper>
       </body>
     </html>
   );
